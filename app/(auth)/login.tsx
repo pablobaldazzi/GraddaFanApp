@@ -56,9 +56,7 @@ export default function LoginScreen() {
         <Text style={styles.buttonText}>{loading ? 'Signing in…' : 'Sign in'}</Text>
       </Pressable>
 
-      <Text style={styles.note}>
-        Note: the backend endpoint is currently a placeholder (/auth/login).
-      </Text>
+      <Text style={styles.note}>Backend: POST /auth/login (GRADA backend).</Text>
     </View>
   );
 }
