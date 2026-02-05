@@ -1,23 +1,27 @@
 import { z } from 'zod';
 import { http } from '@/src/api/http';
 
-// GRADA backend: POST /auth/login
-const LoginResponseSchema = z.object({
+// GRADA backend (fan auth): POST /public/fans/login-password
+const FanLoginResponseSchema = z.object({
   accessToken: z.string(),
-  user: z.object({
+  fan: z.object({
     id: z.string(),
     email: z.string().email(),
-    name: z.string().nullable(),
+    name: z.string().nullable().optional(),
+    firstName: z.string().nullable().optional(),
+    lastName: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
     clubId: z.string(),
-    clubName: z.string(),
-    clubSlug: z.string(),
+    clubName: z.string().optional(),
+    clubSlug: z.string().optional(),
   }),
 });
 
-export async function loginWithEmailPassword(input: {
+export async function fanLoginWithEmailPassword(input: {
+  clubId: string;
   email: string;
   password: string;
-}): Promise<z.infer<typeof LoginResponseSchema>> {
-  const res = await http.post('/auth/login', input);
-  return LoginResponseSchema.parse(res.data);
+}): Promise<z.infer<typeof FanLoginResponseSchema>> {
+  const res = await http.post('/public/fans/login-password', input);
+  return FanLoginResponseSchema.parse(res.data);
 }

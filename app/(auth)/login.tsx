@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { loginWithEmailPassword } from '@/src/auth/authApi';
+import { fanLoginWithEmailPassword } from '@/src/auth/authApi';
 import { setAuthToken } from '@/src/auth/token';
 import { theme } from '@/src/ui/theme';
+import { fetchClubBySlug } from '@/src/api/publicApi';
+import { clubConfig } from '@/src/config/club';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -16,7 +18,8 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const { accessToken } = await loginWithEmailPassword({ email, password });
+      const club = await fetchClubBySlug(clubConfig.slug);
+      const { accessToken } = await fanLoginWithEmailPassword({ clubId: club.id, email, password });
       await setAuthToken(accessToken);
       router.replace('/(tabs)/home');
     } catch (e: any) {
@@ -56,7 +59,7 @@ export default function LoginScreen() {
         <Text style={styles.buttonText}>{loading ? 'Signing in…' : 'Sign in'}</Text>
       </Pressable>
 
-      <Text style={styles.note}>Backend: POST /auth/login (GRADA backend).</Text>
+      <Text style={styles.note}>Backend: /public/fans/login-password (club: {clubConfig.slug})</Text>
     </View>
   );
 }
